@@ -63,9 +63,10 @@ def handle_events():
 open_canvas()
 
 grass = Grass() # 잔디 객체를 생성
-# boy = Boy()
+boy = Boy()
 bigball = Bigball()
 smallball = Smallball()
+
 
 
 
