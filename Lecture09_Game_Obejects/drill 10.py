@@ -100,7 +100,8 @@ while running:
     for boy in team:
         boy.draw()
     for bigball in team2:
-        bigball.draw()
+        if bigball == 30:
+            bigball.draw()
     for smallball in team3:
         smallball.draw()
     update_canvas()
