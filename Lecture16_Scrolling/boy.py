@@ -70,8 +70,9 @@ class WalkingState:
 
 
     def draw(boy):
-        cx, cy = server.background.canvas_width // 2, server.background.canvas_height // 2
-
+        # 소년의 맵 이미지 상의 좌표를, canvas 즉 화면상의 좌표로 변환
+        # cx, cy = boy.x - server.background.window_left, boy.y - server.background.window_bottom
+        cx, cy = server.background.canvas_width // 2, server.background.canvas_height // 2 # 항상 소년은 가운데 오게 됨
         boy.font.draw(cx - 40, cy + 40, '(%d, %d)' % (boy.x, boy.y), (255, 255, 0))
 
         if boy.x_velocity > 0:
@@ -136,6 +137,10 @@ class Boy:
             self.cur_state.exit(self, event)
             self.cur_state = next_state_table[self.cur_state][event]
             self.cur_state.enter(self, event)
+
+        #소년은 어디든 갈 수 있게 되었기 때문에 필요없음
+        # self.x = clamp(50, self.x, server.background.w - 50)
+        # self.y = clamp(50, self.y, server.background.h - 50)
 
 
     def draw(self):

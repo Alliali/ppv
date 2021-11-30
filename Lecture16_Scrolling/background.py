@@ -13,7 +13,7 @@ class TileBackground:
         self.h = 600 * 3
 
         # fill here
-
+        self.tiles =[ [load_image('cube%d%d.png' % (x, y)) for x in range (3)] for y in range(3) ]
 
     def update(self):
         pass
@@ -27,6 +27,18 @@ class TileBackground:
                                    self.h - self.canvas_height)
 
         # fill here
+        tile_left = self.window_left // 800
+        tile_right = min((self.window_left + self.canvas_width) // 800 + 1, 3)
+        left_offset = self.window_left % 800
+
+
+        tile_bottom = self.window_bottom // 600
+        tile_top = min((self.window_bottom + self.canvas_height) // 600 + 1, 3)
+        bottom_offset = self.window_bottom % 600
+
+        for ty in range(tile_bottom, tile_top):
+            for tx in range(tile_left, tile_right):
+                self.tiles[ty][tx].draw_to_origin(-left_offset + (tx - tile_left)*800, -bottom_offset + (ty - tile_bottom)*600)
 
 
 class FixedBackground:
@@ -41,10 +53,13 @@ class FixedBackground:
 
     def draw(self):
         # fill here
+        self.image.clip_draw_to_origin(self.window_left, self.window_bottom, server.background.canvas_width, server.background.canvas_height, 0, 0)
         pass
 
     def update(self):
         # fill here
+        self.window_left = clamp(0, int(server.boy.x) - server.background.canvas_width // 2, server.background.w - server.background.canvas_width)
+        self.window_bottom = clamp(0, int(server.boy.y) - server.background.canvas_height // 2, server.background.h - server.background.canvas_height)
         pass
 
     def handle_event(self, event):
@@ -67,9 +82,9 @@ class InfiniteBackground:
 
     def draw(self):
         self.image.clip_draw_to_origin(self.q3l, self.q3b, self.q3w, self.q3h, 0, 0)                        # quadrant 3
-        self.image.clip_draw_to_origin(self.q2l, self.q2b, self.q2w, self.q2h, 0, 0)                 # quadrant 2
-        self.image.clip_draw_to_origin(self.q4l, self.q4b, self.q4w, self.q4h, 0, 0)                 # quadrant 4
-        self.image.clip_draw_to_origin(self.q1l, self.q1b, self.q1w, self.q1h, 0, 0)          # quadrant 1
+        self.image.clip_draw_to_origin(self.q2l, self.q2b, self.q2w, self.q2h, 0, self.q3h)                 # quadrant 2
+        self.image.clip_draw_to_origin(self.q4l, self.q4b, self.q4w, self.q4h, self.q3w, 0)                 # quadrant 4
+        self.image.clip_draw_to_origin(self.q1l, self.q1b, self.q1w, self.q1h, self.q3w, self.q3h)          # quadrant 1
 
     def update(self):
         # quadrant 3
@@ -78,20 +93,20 @@ class InfiniteBackground:
         self.q3w = clamp(0, self.w - self.q3l, self.w)
         self.q3h = clamp(0, self.h - self.q3b, self.h)
         # quadrant 2
-        self.q2l = 0
+        self.q2l = self.q3l
         self.q2b = 0
-        self.q2w = 0
-        self.q2h = 0
+        self.q2w = self.q3w
+        self.q2h = self.canvas_height - self.q3h
         # quadrand 4
         self.q4l = 0
-        self.q4b = 0
-        self.q4w = 0
-        self.q4h = 0
+        self.q4b = self.q3b
+        self.q4w = self.canvas_width - self.q3w
+        self.q4h = self.q3h
         # quadrand 1
         self.q1l = 0
         self.q1b = 0
-        self.q1w = 0
-        self.q1h = 0
+        self.q1w = self.q4w
+        self.q1h = self.q2h
 
 
     def handle_event(self, event):
